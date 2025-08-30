@@ -1,0 +1,36 @@
+name: Python Linter
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on any pull request (PR) targeting the "main" branch
+  pull_request:
+    branches: [ main ]
+
+# The jobs that make up this workflow
+jobs:
+  # This workflow contains a single job called "lint"
+  lint:
+    # The type of runner that the job will run on
+    # 'ubuntu-latest' is a clean, virtual machine provided by GitHub
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Step 1: Checkout the code from the repository
+      # This is a pre-built action from GitHub that gets your code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up a specific version of Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # You can specify your preferred version, e.g., 3.9, 3.10, etc.
+
+      # Step 3: Install flake8
+      - name: Install dependencies
+        run: pip install flake8
+
+      # Step 4: Run flake8 and fail the build if any errors are found
+      - name: Run flake8
+        run: flake8 app.py
