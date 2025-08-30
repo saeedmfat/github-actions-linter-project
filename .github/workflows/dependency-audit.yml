@@ -1,41 +1,31 @@
 name: Dependency Audit and Security Scan
 
-# Controls when the workflow will run
 on:
-  # Trigger on every push to the main branch
   push:
     branches: [ main ]
 
-# The jobs that make up this workflow
 jobs:
   security-scan:
-    # Name of the job shown in the GitHub UI
     name: Run Safety Check (${{ matrix.python-version }})
-    # Use a matrix strategy to run this job on multiple Python versions
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11'] # Define the versions to test against
-    # The type of runner that the job will run on
+        python-version: ['3.9', '3.10', '3.11']
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Step 1: Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up the specific Python version from the matrix
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Step 3: Install safety (PINNED to the working version)
       - name: Install Safety
         run: pip install safety==2.3.5
 
-      # Step 4: Run safety check on requirements.txt
-      # This step will FAIL if critical vulnerabilities are found.
-      # We use the free public API which is rate-limited.
-      - name: Run Safety Check
-        run: safety check -r requirements.txt --full-report
+      # NEW STEP: Run safety with the API key from GitHub Secrets
+      - name: Run Safety Check (With API Key)
+        run: safety check -r requirements.txt --key ${{ secrets.SAFETY_API_KEY }} --full-report
+        # If the secret is not set, this will become `--key `` (empty) and likely fail.
+        # This is the desired behavior - we want the scan to fail if we can't authenticate properly.
