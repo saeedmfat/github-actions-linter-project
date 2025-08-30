@@ -13,3 +13,4 @@ def long_function_name_with_many_words_and_letters(parameter_one, parameter_two)
     return parameter_one + parameter_two
 
 # W292: no newline at end of file
+# This is a new line that is waaaaaay too long and will definitely violate the E501 line length rule because it exceeds 79 characters
